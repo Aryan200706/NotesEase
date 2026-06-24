@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NotesEase</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#dashboard" aria-label="NotesEase home">
+        <span class="brand-mark">N</span>
+        <span>
+          <strong>NotesEase</strong>
+          <small>Study notes, shared fast</small>
+        </span>
+      </a>
+      <button id="menuBtn" class="menu-btn">☰</button>
+
+      <nav class="topnav" aria-label="Primary navigation">
+        <a href="#dashboard">Home</a>
+        <a href="#library">Library</a>
+        <a href="#upload">Upload</a>
+        <a href="#adminPanel" class="hidden" id="adminNavLink">Admin</a>
+      </nav>
+
+      <div class="user-actions">
+        <button class="ghost-btn" id="openLoginBtn" type="button">Log in</button>
+        <button class="primary-btn" id="openSignupBtn" type="button">Sign up</button>
+        <div class="profile-chip hidden" id="profileChip" aria-label="Signed in user">
+          <span id="profileInitial">U</span>
+          <strong id="profileName">User</strong>
+          <button id="logoutBtn" type="button" aria-label="Log out">Log out</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="dashboard">
+        <div class="hero-copy">
+          <p class="eyebrow">Share. Learn. Succeed.</p>
+          <h1>NotesEase for every CSE branch</h1>
+          <p class="hero-text">
+            Secure uploads and downloads for CSE AI ML, CSE CS, and Robotics & Automation. Students sign in to share PDF notes semester-wise.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-btn" href="#upload">Upload notes</a>
+            <a class="ghost-btn dark" href="#library">Browse library</a>
+          </div>
+          <div class="hero-badges">
+            <span>PDF only</span>
+            <span>Login required</span>
+            <span>Responsive UI</span>
+          </div>
+        </div>
+
+        <div class="hero-panel" aria-label="Notes overview">
+          <div class="pulse-card">
+            <span>Total notes</span>
+            <strong id="totalNotes">0</strong>
+          </div>
+          <div class="pulse-card">
+            <span>Branches</span>
+            <strong>3</strong>
+          </div>
+          <div class="pulse-card wide">
+            <span>Access</span>
+            <strong id="accessStatus">Preview only</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="feature-row">
+        <article class="feature-card">
+          <h2>🎓Semester-wise note</h2>
+          <p>📚Browse study material organized by semester and branch for faster access.</p>
+        </article>
+        <article class="feature-card">
+          <h2>📄Pdf Preview</h2>
+          <p>👁️Preview notes before downloading so you can verify the content quickly.</p>
+        </article>
+        <article class="feature-card">
+          <h2>🤝Student Uploads</h2>
+          <p>⬆️Students can contribute notes and build a shared learning library.</p>
+        </article>
+      </section>
+
+      <section class="toolbar-section" id="library" aria-labelledby="libraryTitle">
+        <div>
+          <p class="eyebrow">Library</p>
+          <h2 id="libraryTitle">Search by branch and semester</h2>
+          <p class="section-copy">Find notes in one of three categories and filter by semester. PDF downloads require an account.</p>
+        </div>
+
+        <div class="filters" aria-label="Filter notes">
+          <label>Search<input id="searchInput" type="search" placeholder="Title, subject, uploader"></label>
+          <label>Branch<select id="branchFilter"><option value="all">All branches</option></select></label>
+          <label>Semester<select id="semesterFilter"><option value="all">All semesters</option></select></label>
+        </div>
+      </section>
+
+      <section class="library-grid" id="notesGrid" aria-live="polite"></section>
+
+      <section class="empty-state hidden" id="emptyState">
+        <h2>No notes found</h2>
+        <p>Try another semester or branch, or upload the first PDF for your cohort.</p>
+      </section>
+
+      <section class="upload-section" id="upload" aria-labelledby="uploadTitle">
+        <div class="upload-copy">
+          <p class="eyebrow">Upload</p>
+          <h2 id="uploadTitle">Share a PDF note</h2>
+          <p>Anyone with an account can upload one PDF per note. Keep uploads semester-wise and branch-specific.</p>
+        </div>
+
+        <form class="upload-form" id="uploadForm">
+          <label>Note title<input id="noteTitle" type="text" placeholder="DSA Notes" required></label>
+          <label>Subject<input id="noteSubject" type="text" placeholder="DSA" required></label>
+          <div class="form-row">
+            <label>Branch<select id="noteBranch" required></select></label>
+            <label>Semester<select id="noteSemester" required></select></label>
+          </div>
+          <label>Description<textarea id="noteDescription" rows="3" placeholder="Summarize the PDF content"></textarea></label>
+          <label class="dropzone" id="dropzone">
+            <input id="noteFile" type="file" accept="application/pdf" required>
+            <span>Drop a PDF here or browse your device</span>
+            <strong id="selectedFileName">Only PDF files are accepted</strong>
+          </label>
+          <button class="primary-btn full" type="submit">Upload note</button>
+        </form>
+      </section>
+
+      <section class="admin-section hidden" id="adminPanel" aria-labelledby="adminTitle">
+        <div class="admin-copy">
+          <p class="eyebrow">Admin</p>
+          <h2 id="adminTitle">Manage the uploaded notes</h2>
+          <p>Admins can remove any PDF from the library and keep the shared collection accurate.</p>
+        </div>
+        <div class="admin-card">
+          <div class="admin-status"><strong id="adminCount">0</strong> uploaded notes</div>
+          <div class="admin-list" id="adminList"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div>
+          <h3>NotesEase</h3>
+          <p>Simple PDF sharing for students across semesters and branches.</p>
+        </div>
+        <div>
+          <h3>Quick links</h3>
+          <nav class="footer-nav" aria-label="Footer navigation">
+            <a href="#library">Library</a>
+            <a href="#upload">Upload</a>
+            <a href="#dashboard">Home</a>
+          </nav>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <p>aiml.25.aryanrao@sietpanchkula.ac.in</p>
+          <p>Built for study groups and campus teams.</p>
+        </div>
+      </div>
+      <div class="footer-bar">
+        <p>© NotesEase 2026 · Free account creation · PDF-only notes.</p>
+      </div>
+    </footer>
+  </div>
+
+  <dialog class="auth-modal" id="authModal">
+    <form class="auth-card" id="authForm">
+      <button class="close-btn" id="closeAuthBtn" type="button" aria-label="Close">x</button>
+      <p class="eyebrow" id="authEyebrow">Welcome back</p>
+      <h2 id="authTitle">Log in to NotesEase</h2>
+      <label class="auth-name-label">
+        Name
+        <input id="authName" type="text" placeholder="Your name">
+      </label>
+      <label>
+        Email
+        <input id="authEmail" type="email" placeholder="you@example.com" required>
+      </label>
+      <label>
+        Password
+        <input id="authPassword" type="password" placeholder="At least 6 characters" minlength="6" required>
+      </label>
+      <button class="primary-btn full" id="authSubmitBtn" type="submit">Log in</button>
+      <button class="link-btn" id="switchAuthBtn" type="button">Need an account? Sign up</button>
+      <p class="form-message" id="authMessage" role="status"></p>
+    </form>
+  </dialog>
+
+  <dialog class="preview-modal" id="previewModal">
+    <div class="preview-card">
+      <div class="preview-header">
+        <div>
+          <p class="eyebrow" id="previewMeta">Preview</p>
+          <h2 id="previewTitle">Note preview</h2>
+        </div>
+        <button class="close-btn" id="closePreviewBtn" type="button" aria-label="Close">x</button>
+      </div>
+      <div class="preview-body" id="previewBody"></div>
+      <div class="preview-footer">
+        <span id="previewHint">Log in to download this PDF.</span>
+        <button class="primary-btn" id="modalDownloadBtn" type="button">Download</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast hidden" id="toast" role="status"></div>
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+  import { getFirestore, collection, addDoc, getDocs, query, where, deleteDoc, doc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+  import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js';
+
+  const firebaseConfig = {
+     apiKey: "AIzaSyDvIr2bkzPR2_LE_N9u38QbHyFTEnpUVI4",
+  authDomain: "notesease-7635e.firebaseapp.com",
+  projectId: "notesease-7635e",
+  storageBucket: "notesease-7635e.firebasestorage.app",
+  messagingSenderId: "411744236681",
+  appId: "1:411744236681:web:d2600428b1824b24db0258",
+  measurementId: "G-WR64NHGD9G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+ window.firebaseApp = {
+ auth,
+ db,
+ storage,
+ signInWithEmailAndPassword,
+ createUserWithEmailAndPassword,
+ signOut,
+ onAuthStateChanged,
+ collection,
+ addDoc,
+ getDocs,
+ deleteDoc,
+ doc,
+ ref,
+ uploadBytes,
+ getDownloadURL,
+ deleteObject
+};
+</script>
+  <script defer src="script.js"></script>
+ 
+</body>
+</html>
