@@ -31,6 +31,7 @@ const elements = {
   searchInput: document.querySelector("#searchInput"),
   branchFilter: document.querySelector("#branchFilter"),
   semesterFilter: document.querySelector("#semesterFilter"),
+  subjectFilter: document.querySelector("#subjectFilter"),
   noteBranch: document.querySelector("#noteBranch"),
   noteSemester: document.querySelector("#noteSemester"),
   uploadForm: document.querySelector("#uploadForm"),
@@ -102,11 +103,11 @@ async function init() {
  onAuthStateChanged(auth, async (user) => {
 
     state.currentUser = user;
-
     await loadNotesFromFirestore();
 
-    updateAuthUi();
+    populateSubjectFilter();
 
+    updateAuthUi();
 
     renderNotes();
     
@@ -143,7 +144,7 @@ function bindEvents() {
   elements.searchInput.addEventListener("input", renderNotes);
   elements.branchFilter.addEventListener("change", renderNotes);
   elements.semesterFilter.addEventListener("change", renderNotes);
-
+  elements.subjectFilter.addEventListener("change",renderNotes);
   elements.uploadForm.addEventListener("submit", handleUpload);
   elements.noteFile.addEventListener("change", updateSelectedFile);
   elements.closePreviewBtn.addEventListener("click", closePreview);
@@ -169,6 +170,30 @@ function bindEvents() {
     elements.noteFile.files = event.dataTransfer.files;
     updateSelectedFile();
   });
+}
+function populateSubjectFilter() {
+
+    const subjects =
+      [...new Set(
+          state.notes
+              .map(note => note.subject)
+              .filter(Boolean)
+      )];
+
+    elements.subjectFilter.innerHTML =
+      '<option value="all">All subjects</option>';
+
+    subjects.sort().forEach(subject => {
+
+        elements.subjectFilter.append(
+            new Option(
+                subject,
+                subject
+            )
+        );
+
+    });
+
 }
 
 function openAuth(mode) {
@@ -312,13 +337,17 @@ function getFilteredNotes() {
   const query = elements.searchInput.value.trim().toLowerCase();
   const branch = elements.branchFilter.value;
   const semester = elements.semesterFilter.value;
+  const subject =elements.subjectFilter.value;
 
   return state.notes.filter((note) => {
     const searchable = `${note.title} ${note.subject} ${note.description} ${note.uploader}`.toLowerCase();
     return (
       (!query || searchable.includes(query)) &&
       (branch === "all" || note.branch === branch) &&
-      (semester === "all" || note.semester === semester)
+
+      (semester === "all" || note.semester === semester) &&
+
+      (subject === "all" || note.subject === subject)
     );
   });
 }
@@ -336,10 +365,11 @@ function renderNotes() {
       <div class="preview-window">${createPreviewMarkup(note)}</div>
       <div class="note-content">
         <div class="meta-list">
-          <span>${escapeHtml(note.branch)}</span>
-          <span>${escapeHtml(note.semester)}</span>
-          <span>${formatSize(note.fileSize)}</span>
-        </div>
+        <span>${escapeHtml(note.branch)}</span>
+        <span>${escapeHtml(note.semester)}</span>
+        <span>${escapeHtml(note.subject)}</span>
+       <span>${formatSize(note.fileSize)}</span>
+      </div>
         <h3>${escapeHtml(note.title)}</h3>
         <p>${escapeHtml(note.description || "Preview this PDF before downloading it.")}</p>
         <span class="format-pill">PDF</span>
@@ -486,6 +516,8 @@ await addDoc(
 
   elements.uploadForm.reset();
   elements.selectedFileName.textContent = "Only PDF files are accepted";
+  await loadNotesFromFirestore();
+  populateSubjectFilter();
   renderNotes();
   showToast("Note uploaded to the library.");
   document.querySelector("#library").scrollIntoView({ behavior: "smooth", block: "start" });

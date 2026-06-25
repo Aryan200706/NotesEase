@@ -265,7 +265,7 @@ p {
 
 h1 {
   margin-bottom: 14px;
-  font-size: clamp(4.1rem, 11vw, 8.6rem);
+  font-size: clamp(4.1rem, 11vw, 7rem);
   line-height: 0.86;
   letter-spacing: 0;
 }
@@ -913,7 +913,7 @@ dialog::backdrop {
   }
 
   h1 {
-    font-size: clamp(3.5rem, 18vw, 5.6rem);
+    font-size: clamp(3.5rem, 18vw, 4rem);
   }
 
   .hero-panel,
