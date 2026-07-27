@@ -377,13 +377,13 @@ function renderNotes() {
       <div class="note-actions">
   <button class="preview-btn" type="button"
     data-action="preview"
-    data-id="${note.id}">
+    data-id="${note.firestoreId}">
     Preview
   </button>
 
   <button class="download-btn" type="button"
     data-action="download"
-    data-id="${note.id}">
+    data-id="${note.firestoreId}">
     Download
   </button>
 
@@ -395,7 +395,7 @@ function renderNotes() {
       <button class="delete-btn"
         type="button"
         data-action="delete"
-        data-id="${note.id}">
+        data-id="${note.firestoreId}">
         Delete
       </button>
       `
@@ -438,19 +438,6 @@ function createPreviewMarkup(note){
 
 }
 
-async function openPreview(note){
-
-    elements.previewTitle.textContent =
-        note.title;
-
-    elements.previewMeta.textContent =
-        `${note.branch} • Semester ${note.semester}`;
-
-    await renderPdfPreview(note.fileUrl);
-
-    elements.previewModal.showModal();
-}
-
 function closePreview() {
   elements.previewModal.close();
   state.selectedPreviewNote = null;
@@ -470,7 +457,10 @@ async function handleUpload(event) {
     note.fileName === file.name &&
     note.fileSize === file.size
 );
-
+if (!file) {
+    showToast("Choose a PDF file to upload.");
+    return;
+}
 if (duplicate) {
     showToast("This file already exists");
     return;
@@ -485,7 +475,7 @@ if (duplicate) {
     return;
   }
   const noteId = crypto.randomUUID();
-
+console.log(note);
 const storageRef =
 ref(storage, `notes/${noteId}.pdf`);
 
@@ -542,22 +532,22 @@ function updateSelectedFile() {
 
 function downloadNote(note){
 
- if(!state.currentUser){
+    if(!note) return;
 
-   openAuth("login");
-   return;
+    if(!state.currentUser){
+        openAuth("login");
+        return;
+    }
 
- }
+    const link = document.createElement("a");
 
- const link =
- document.createElement("a");
+    link.href = note.fileUrl;
+    link.target = "_blank";
+    link.download = note.fileName;
 
- link.href = note.fileUrl;
-
- link.download = note.fileName;
-
- link.click();
-
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function isAllowedFile(file) {
@@ -604,23 +594,28 @@ function renderAdminNotes() {
         <span>${escapeHtml(note.branch)} · ${escapeHtml(note.semester)}</span>
         <span>${escapeHtml(note.uploader)} · ${formatSize(note.fileSize)}</span>
       </div>
-      <button class="primary-btn" type="button" data-id="${note.id}">Delete</button>
+      <button class="primary-btn" type="button" data-id="${note.firestoreId}">Delete</button>
     </div>
   `).join("");
 
   elements.adminList.innerHTML = rows || "<p>No notes are available yet.</p>";
   elements.adminList.querySelectorAll("button[data-id]").forEach((button) => {
-    button.addEventListener("click", () => deleteNote(button.dataset.id));
-  });
+    button.addEventListener("click", () => {
+        const note = state.notes.find(
+    n => n.firestoreId === button.dataset.id
+);
+
+        if (!note) {
+            console.error("Note not found:", button.dataset.id);
+            return;
+        }
+
+        deleteNote(note);
+    });
+});
+
 }
 
-async function deleteNote(id) {
-  await runStore("readwrite", (store) => store.delete(id));
-  state.notes = await getAllNotes();
-  renderNotes();
-  renderAdminNotes();
-  showToast("Note removed from the library.");
-}
 
 function showToast(message) {
   clearTimeout(state.toastTimer);
@@ -632,7 +627,6 @@ function showToast(message) {
 }
 
 async function deleteNote(note) {
-
     try {
 
         const confirmed = confirm(
@@ -641,8 +635,9 @@ async function deleteNote(note) {
 
         if (!confirmed) return;
 
-        const storageRef =
-            ref(storage, `notes/${note.id}.pdf`);
+        console.log("Deleting note:", note);
+
+        const storageRef = ref(storage, note.fileUrl);
 
         await deleteObject(storageRef);
 
@@ -657,19 +652,17 @@ async function deleteNote(note) {
         showToast("Note deleted");
 
     } catch (error) {
-
         console.error(error);
-
-        showToast("Delete failed");
-
+         showToast("Delete failed");
     }
-
-}
+  }
 function openPreview(note){
+
+    state.selectedPreviewNote = note;
 
     elements.previewBody.innerHTML = `
       <iframe
-         src="${note.fileUrl}#toolbar=0"
+         src="${note.fileUrl}#page=1&toolbar=0"
          width="100%"
          height="700">
       </iframe>
