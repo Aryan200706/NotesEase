@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background: Dark Charcoal -->
+    <linearGradient id="bgGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22181C" />
+      <stop offset="100%" stop-color="#140E11" />
+    </linearGradient>
+  </defs>
+
+  <!-- Dark charcoal base badge -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad1)" />
+  
+  <!-- Subtle Amber Gold Accent Border -->
+  <rect x="12" y="12" width="488" height="488" rx="116" fill="none" stroke="#FFC56E" stroke-width="12" opacity="0.3" />
+
+  <!-- Stylized "N" Sheet in Vibrant Red -->
+  <path d="M140 120 V392 H200 V250 L312 392 H372 V120 H312 V262 L200 120 Z" fill="#E51022" />
+
+  <!-- Folded Corner Accent in Amber Gold -->
+  <path d="M312 120 L372 180 H312 Z" fill="#FFC56E" />
+</svg>
