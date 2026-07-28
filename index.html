@@ -13,7 +13,7 @@
       <a class="brand" href="#dashboard" aria-label="NotesEase home">
         <span class="brand-mark"><img src="/assets/favicon.svg" alt="NotesEase"></span>
         <span>
-          <strong>NotesEsasdase</strong>
+          <strong>NotesEase</strong>
           <small>Study notes, shared fast</small>
         </span>
       </a>
@@ -52,7 +52,6 @@
           <div class="hero-badges">
             <span>PDF only</span>
             <span>Login required</span>
-            <span>Responsive UI</span>
           </div>
         </div>
 
@@ -213,6 +212,14 @@
   </dialog>
 
   <div class="toast hidden" id="toast" role="status"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.76/pdf.min.js"></script>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.76/pdf.worker.min.js";
+</script>
+
+<script type="module" src="script.js"></script>
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js';
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';

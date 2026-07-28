@@ -475,7 +475,7 @@ if (duplicate) {
     return;
   }
   const noteId = crypto.randomUUID();
-console.log(note);
+
 const storageRef =
 ref(storage, `notes/${noteId}.pdf`);
 
@@ -656,20 +656,95 @@ async function deleteNote(note) {
          showToast("Delete failed");
     }
   }
-function openPreview(note){
+// function openPreview(note){
+
+//     state.selectedPreviewNote = note;
+
+//     elements.previewBody.innerHTML = `
+//       <iframe
+//          src="${note.fileUrl}#page=1&toolbar=0"
+//          width="100%"
+//          height="700">
+//       </iframe>
+//     `;
+
+//     elements.previewModal.showModal();
+
+// }
+// new pdf.js
+async function openPreview(note) {
 
     state.selectedPreviewNote = note;
 
+    elements.previewTitle.textContent = note.title;
+
+    elements.previewMeta.textContent =
+        `${note.branch} • Semester ${note.semester}`;
+
     elements.previewBody.innerHTML = `
-      <iframe
-         src="${note.fileUrl}#page=1&toolbar=0"
-         width="100%"
-         height="700">
-      </iframe>
+        <div id="pdfPreviewContainer"></div>
+
+        <div class="preview-limit">
+            🔒 Preview limited to first 2 pages.
+            <br>
+            Download the file to read the complete notes.
+        </div>
     `;
 
     elements.previewModal.showModal();
+
+    await renderPdfPreview(note.fileUrl);
+
 }
+async function renderPdfPreview(pdfUrl) {
+
+    const container =
+        document.getElementById("pdfPreviewContainer");
+
+    container.innerHTML = "";
+
+    const pdf =
+        await pdfjsLib.getDocument(pdfUrl).promise;
+
+    const pages =
+        Math.min(pdf.numPages, 2);
+
+    for (let i = 1; i <= pages; i++) {
+
+        const page =
+            await pdf.getPage(i);
+
+        const viewport =
+            page.getViewport({
+                scale: 1.35
+            });
+
+        const canvas =
+            document.createElement("canvas");
+
+        canvas.width =
+            viewport.width;
+
+        canvas.height =
+            viewport.height;
+
+        canvas.className = "preview-page";
+
+        container.appendChild(canvas);
+
+        await page.render({
+
+            canvasContext:
+                canvas.getContext("2d"),
+
+            viewport
+
+        }).promise;
+
+    }
+
+}
+
 function toggleMobileMenu(){
 
   document
@@ -677,3 +752,4 @@ function toggleMobileMenu(){
     .classList.toggle("show");
 
 }
+

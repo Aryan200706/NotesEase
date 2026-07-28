@@ -1127,3 +1127,52 @@ body {
 *::after {
     box-sizing: border-box;
 }
+
+/* Pdf.js */
+#pdfPreviewContainer{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.preview-page{
+
+    width:100%;
+
+    max-width:760px;
+
+    border-radius:12px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
+
+    background:white;
+
+}
+
+.preview-limit{
+
+    margin-top:20px;
+
+    padding:18px;
+
+    text-align:center;
+
+    background:#fff3cd;
+
+    border:1px solid #ffc56e;
+
+    border-radius:12px;
+
+    color:#22181c;
+
+    font-weight:600;
+
+}
