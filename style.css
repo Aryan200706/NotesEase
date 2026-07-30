@@ -385,6 +385,7 @@ h2 {
   align-items: start;
   padding: 54px 0 24px;
   border-top: 1px solid var(--line);
+  overflow-y: auto;
 }
 
 .admin-card {
@@ -395,6 +396,8 @@ h2 {
   box-shadow: var(--shadow);
   display: grid;
   gap: 14px;
+  overflow-y: scroll;
+  max-height: 75vh;
 }
 
 .admin-status {

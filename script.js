@@ -694,6 +694,7 @@ async function openPreview(note) {
     elements.previewModal.showModal();
 
     await renderPdfPreview(note.fileUrl);
+    console.log(fileUrl);
 
 }
 async function renderPdfPreview(pdfUrl) {
@@ -742,6 +743,7 @@ async function renderPdfPreview(pdfUrl) {
         }).promise;
 
     }
+    console.log(fileUrl);
 
 }
 
