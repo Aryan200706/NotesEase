@@ -685,7 +685,7 @@ async function openPreview(note) {
         <div id="pdfPreviewContainer"></div>
 
         <div class="preview-limit">
-            🔒 Preview limited to first 2 pages.
+            🔒 Preview is currently limited.
             <br>
             Download the file to read the complete notes.
         </div>
